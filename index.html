@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta content='IE=edge' http-equiv='X-UA-Compatible'>
+<meta content='width=device-width, initial-scale=1' name='viewport'>
+<title>Resilient Integration Testing - Continuous Lifecycle 2015</title>
+<script script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' type='text/javascript'></script>
+<link href="assets/stylesheets/app-f7c99622.css" rel="stylesheet" />
+<script src="assets/javascripts/vendor-a2809d13.js"></script>
+<script src="assets/javascripts/app-7be069d1.js"></script>
+</head>
+<body>
+<div class='reveal'>
+<div class='slides'>
+<section id='intro'>
+<section id='intro_title'>
+<h2>Fast and Resilient Integration Testing</h2>
+<h3>Continuous Lifecycle 2015</h3>
+<div style='margin-top: 1em'></div>
+<p>
+<a href='http://github.com/drtom'>
+<i class='fa fa-github-square'></i>
+</a>
+<a href='https://twitter.com/DrTom21'>
+<i class='fa fa-twitter-square'></i>
+</a>
+<a href='http://drtom.ch/'>
+<i class='fa fa-home'></i>
+</a>
+&nbsp;
+Dr. Thomas Schank
+</p>
+<p>
+<a href='http://github.com/eins78'>
+<i class='fa fa-github-square'></i>
+</a>
+<a href='https://twitter.com/eins78'>
+<i class='fa fa-twitter-square'></i>
+</a>
+&nbsp;
+Max F. Albrecht
+</p>
+<div style='margin-top: 2em'>
+<a href='http://drtom.ch/talks/2015/CL'>
+<p style='margin: 0px'>
+<code>http://drtom.ch/talks/2015/CL</code>
+</p>
+<img src='presentation-url-62ab2dc9.svg' style='width: 3em;'>
+</a>
+</div>
+<p style='margin-top: 1em; font-size: 50%'>Version 1.0.0</p>
+<aside class='notes'>
+<ul>
+  <li>robuste, schnelle, automatisierte tests</li>
+</ul>
+</aside>
+</section>
+<section data-background='medienarchiv-95bac5e4.png' id='intro_medienarchiv'></section>
+<section id='intro_about'>
+<h1>Madek Team & Us</h1>
+<h3>
+<a href='https://www.zhdk.ch/'>
+<i class='fa fa-institution'></i>
+Zurich University of the Arts
+</a>
+</h3>
+<div class='container' style='width: 1000px; height: 400px; position: relative;'>
+<img src='cw-c9e17381.jpg' style='width: 15%; position: absolute; top: 0; left: 0;'>
+<img src='sus-d7d01e83.jpg' style='width: 15%; position: absolute; bottom: 20px; left: 0;'>
+<img src='madek-team_2015-5689e113.jpg' style='height: 90%; position: absolute; top: 0; left: 230px;'>
+<img src='matus-f7637c23.jpg' style='width: 15%; position: absolute; top: 0; right: 0;'>
+<img src='toni-8857c02e.jpg' style='width: 15%; position: absolute; bottom: 20px; right: 0;'>
+</div>
+<ul style='font-size: 80%;'>
+<li>Thomas: Software-Architect, Developer, CI-Infrastructure</li>
+<li>Max: Frontend Software-Engineer, Meta-Data Concepts</li>
+</ul>
+<aside class='notes'>
+<ul>
+  <li>kleines Team</li>
+  <li>begrenzte Ressourcen</li>
+</ul>
+</aside>
+</section>
+<section id='intro_madek-tec'>
+<h2>
+<a href='https://github.com/madek'>
+Madek
+<i class='fa fa-github'></i>
+</a>
+-
+<a href='http://medienarchiv.zhdk.ch/'>
+Medienarchiv der Künste
+</a>
+</h2>
+<h2 id="architecture--technologies">Architecture &amp; Technologies</h2>
+
+<ul>
+  <li>Ruby on Rails, Clojure</li>
+  <li>React with progressive enhancement</li>
+  <li>3-tier web-application</li>
+  <li>towards micro-services</li>
+  <li>deployment via Ansible to private cloud</li>
+</ul>
+</section>
+<section id='intro_madek-architecture'>
+<img src='madek-architecture-3189e4e1.svg' style='width: 100%'>
+</section>
+<section id='intro_madek-testing'>
+<h2 id="madek-testing">Madek Testing</h2>
+
+<p><a href="http://specificationbyexample.com/">"<strong>specification by example</strong>"</a></p>
+
+<p>→ integration testing</p>
+
+<p>→ components interaction</p>
+</section>
+</section>
+<!-- /############################################################################# -->
+<!-- /### Problem ################################################################# -->
+<!-- /############################################################################# -->
+<section id='probem'>
+<section id='problem_problem'>
+<h1>1. The Problem</h1>
+<p style='font-size: 7em'>
+<i class='fa fa-question-circle'></i>
+</p>
+</section>
+<section id='problem_madek-2012'>
+<h2 id="madek-project-2012">Madek Project 2012</h2>
+
+<p>many new features, many new tests</p>
+
+<ul>
+  <li>testing time 1 1/2 - 2 hours, increasing</li>
+  <li>more and more failing tests: <strong>false negatives</strong></li>
+  <li>1/8 builds pass</li>
+</ul>
+</section>
+<section id='problem_improve-tests'>
+<div class='row'>
+<div class='col' style='float: left; width: 40%'>
+<img src='scream-a4cd6376.jpg' style='max-width: 100%;'>
+</div>
+<div class='col' style='float: left; width: 60%;'>
+<h2 id="try-to-improve-tests">Try to Improve Tests</h2>
+<ul>
+  <li>very time and resources consuming</li>
+  <li>improvement for some time</li>
+  <li>new features and new tests made efforts futile</li>
+</ul>
+</div>
+</div>
+</section>
+<section id='problem_manual-retries'>
+<h1 id="manual-retrying">Manual Retrying</h1>
+
+<p>automated tests, local retries</p>
+
+<p>automatic → semi automatic testing</p>
+<aside class='notes'>
+<ul>
+  <li>bekanntes problem?</li>
+  <li>retry Test-Frameworks, hat nicht geholfen</li>
+  <li>no Continuous Integration / Delivery</li>
+</ul>
+</aside>
+</section>
+</section>
+<!-- /############################################################################# -->
+<!-- /### Comprehension ########################################################### -->
+<!-- /############################################################################# -->
+<section id='comprehension'>
+<section id='comprehension_intro'>
+<h1>2. Comprehension</h1>
+<img src='GirolamoCardano-edec2015.jpg' style='max-width: 100%; border: 0px solid gray;'>
+<aside class='notes'>
+<ul>
+  <li>Girolamo Cardano</li>
+  <li>Mathematiker, Artzt und Glücksspieler!</li>
+  <li>Gerücht Mathematische Ergebnisse Zurückgehalten um
+sie gewinnträchtig beim Glücksspiel einzusetzen</li>
+</ul>
+</aside>
+</section>
+<section id='comprehension_probability'>
+<h2 id="probability-of-a-false-negative-for-a-whole-test-suite">Probability of a False Negative for a whole Test-Suite</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td>Expression</td>
+      <td>Example</td>
+    </tr>
+    <tr>
+      <td>probability false negative single test</td>
+      <td><script type="math/tex">p_f</script></td>
+      <td>3%</td>
+    </tr>
+    <tr>
+      <td>probability "success"</td>
+      <td><script type="math/tex">p_s = 1 - p_f</script></td>
+      <td>0.97</td>
+    </tr>
+    <tr>
+      <td>number of tests</td>
+      <td><script type="math/tex">n</script></td>
+      <td>100</td>
+    </tr>
+    <tr>
+      <td>probability "success" whole suite</td>
+      <td><script type="math/tex">\mathbf{ P_s  = p_s^n = \left( 1 - p_f \right)^n}</script></td>
+      <td><script type="math/tex">\approx 5 \%</script></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>→ only one out of 20 will pass as it should</strong></p>
+<p style='text-size: 80%'>
+"succes" = true positive
+</p>
+</section>
+<section id='comprehension_retrying'>
+<h1 id="why-retrying-works-so-well">Why retrying works so well</h1>
+
+<p>let <script type="math/tex">k</script> number of independent retries per test</p>
+
+<p><script type="math/tex">P_s(n) = (1 - p_f)^n</script>
+<script type="math/tex">\Rightarrow</script>
+<script type="math/tex">\mathbf{  P'_s(n,k) = \left(1 - p_f^k\right)^n }</script></p>
+
+<p>Expected successful outcome for <script type="math/tex">n = 100</script> and <script type="math/tex">p_f = 0.03</script></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>k</td>
+      <td><script type="math/tex">P'_s</script></td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>5%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>91%</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>99.7%</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+<section id='comprehension_conclusion'>
+<h1 id="comprehension---conclusion">2. Comprehension - Conclusion</h1>
+
+<ul>
+  <li>
+    <p>more tests → <strong>exponential</strong> increase of likeliness for false negatives</p>
+  </li>
+  <li>
+    <p>compensate by <strong>retrying</strong> single tests just a <strong>few times</strong></p>
+  </li>
+</ul>
+
+<p><strong>→ retrying is not an anti-pattern</strong></p>
+
+<p><strong>→ it can be a necessity</strong></p>
+<aside class='notes'>
+<ul>
+  <li>Integration Tests 0&#160;&#187; p_f !!!</li>
+</ul>
+</aside>
+</section>
+</section>
+<!-- /############################################################################# -->
+<!-- /### Implementation ########################################################## -->
+<!-- /############################################################################# -->
+<section id='implementation'>
+<section id='implementation-intro'>
+<h1>3. Implementation</h1>
+<p style='font-size: 7em'>
+<i class='fa fa-cogs'></i>
+</p>
+</section>
+<section id='implementation_jenkins'>
+<div class='row'>
+<div class='col' style='float: left; width: 40%;'>
+<img src='jenkins-aggregator-486445dd.png' style='max-width: 100%; border: 0px solid gray;'>
+</div>
+<div class='col' style='float: left; width: 60%'>
+<h2 id="jenkins">Jenkins</h2>
+
+<ul>
+  <li>fall 2012</li>
+  <li>build creates other builds via the Jenkins API</li>
+  <li>last build aggregates</li>
+  <li>solved false negative problem (partly)</li>
+  <li>testing time: 15 - 25 minutes</li>
+</ul>
+
+<p>→ it worked</p>
+</div>
+</div>
+</section>
+<section id='implementation_jenkins-problems'>
+<div class='row'>
+<div class='col' style='float: left; width: 40%;'>
+<img src='screwdriver-037802f7.jpg' style='max-width: 100%; '>
+</div>
+<div class='col' style='float: left; width: 60%'>
+<ul>
+  <li>
+    <p>frequent code pushes interfere</p>
+  </li>
+  <li>
+    <p>"REST-like style API" → not much like REST</p>
+  </li>
+  <li>
+    <p>considerable effort and maintenance</p>
+  </li>
+</ul>
+
+<p><strong>→  Jenkins and "CI-X" just aren't made for this</strong></p>
+</div>
+</div>
+</section>
+<section id='implementation_homegrown-solution'>
+<h1 id="cider-cihttpcider-ciinfo"><a href="http://cider-ci.info">Cider-CI</a></h1>
+
+<p>homegrown solution, started in spring 2013</p>
+
+<ul>
+  <li>inherent support for <strong>retries</strong> and <strong>parallelization</strong></li>
+  <li>test <strong>reproducibility</strong></li>
+  <li>tight <strong>integration</strong> with <strong>source code</strong></li>
+  <li><strong>manage services</strong> while testing</li>
+  <li>support everything from <strong>testing</strong> to <strong>deployment</strong></li>
+</ul>
+
+<p>ready to use in fall 2013, <strong>never looked back</strong></p>
+<aside class='notes'>
+<ul>
+  <li>eigenes System, Open Source, Stolz,</li>
+  <li>Konzepte</li>
+</ul>
+</aside>
+</section>
+</section>
+<!-- /############################################################################# -->
+<!-- /### Concepts in Context ##################################################### -->
+<!-- /############################################################################# -->
+<section id='concepts'>
+<section id='concepts-intro'>
+<h1>4. Concepts in Context</h1>
+<p style='font-size: 7em'>
+<i class='fa fa-lightbulb-o'></i>
+</p>
+</section>
+<!-- /### Jobs #################################################################### -->
+<section id='concepts_jobs'>
+<h1>Jobs</h1>
+<div class='row'>
+<div class='col' style='float: left; width: 60%'>
+<h3 id="examples">Examples</h3>
+
+<ul>
+  <li>run test-suite</li>
+  <li>perform static code checks</li>
+  <li>build</li>
+  <li>deploy</li>
+</ul>
+
+<p>jobs can be <strong>triggered</strong> and can <strong>depend on each other</strong></p>
+</div>
+<div class='col' style='float: left; width: 40%;'>
+<img src='job-dependencies-9a571fcc.svg' style='max-width: 100%; '>
+</div>
+</div>
+<aside class='notes'>
+<ul>
+  <li>"build" aufgeteilt in mehrere Entitäten</li>
+  <li><em>Continuous Integration Server</em>  vs. script runner</li>
+</ul>
+</aside>
+</section>
+<section id='concepts_project-configuration'>
+<h1 id="project-configuration">Project Configuration</h1>
+
+<p><code>cider-ci.yml</code> file in the project</p>
+
+<pre><code>jobs:&#x000A;  deploy_test:&#x000A;    name: Deploy to test&#x000A;&#x000A;    depends-on:&#x000A;    - type: job&#x000A;      job: integration-tests&#x000A;      states: [passed]&#x000A;&#x000A;    run-on:&#x000A;    - type: branch&#x000A;      include-match: ^master$&#x000A;&#x000A;    # specify tasks etc&#x000A;</code></pre>
+
+<p><strong>The source is the truth.</strong></p>
+
+<p>configuration: reproducible, reviews, audits ???</p>
+<aside class='notes'>
+<ul>
+  <li>siehe Vortrag Dr. Andreas Krüger</li>
+  <li>und Dave Farley</li>
+</ul>
+</aside>
+</section>
+<section id='concepts_jobs-and-scm'>
+<h1 id="cider-ci-and-the-source-code">Cider-CI and the Source Code</h1>
+
+<p>Cider-CI "knows" about commits, branches, submodules,&#8230;</p>
+<img src='ci-entities_jobs-ac40a29f.svg' style='width: 100%; '>
+<p><code>tree-id</code>: fingerprint of your source code</p>
+
+<ul>
+  <li><strong>reproducibility</strong></li>
+  <li>jobs can be <strong>run at any time</strong> (later)</li>
+  <li><strong>binary search</strong> for "bad" commits</li>
+  <li>commit amends, squashing: <strong>existing job remains valid</strong></li>
+</ul>
+</section>
+<!-- /############################################################################# -->
+<section id='concepts_tasks-trials_1'>
+<h1>Jobs & Tasks</h1>
+<div class='image'>
+<a href='job-tasks-1e98d87e.svg'>
+<img src='job-tasks-1e98d87e.svg' style='width: 500px;'>
+</a>
+</div>
+<p>job: container and state aggregate for tasks</p>
+
+<p><strong>→ parallelization</strong></p>
+</section>
+<section id='concepts_tasks-trials'>
+<h1>Tasks & Trials</h1>
+<div class='image'>
+<a href='trial-retry-2273ed85.svg'>
+<img src='trial-retry-2273ed85.svg' style='width: 700px;'>
+</a>
+</div>
+<ul>
+  <li><strong>blueprint</strong></li>
+  <li>container and state aggregate for trials</li>
+</ul>
+
+<p><strong>→ resilience</strong></p>
+<aside class='notes'>
+<ul>
+  <li>Robustheit =&gt; Parallelisierung, aber nicht umgekehrt</li>
+</ul>
+</aside>
+</section>
+<section id='concepts_trials-scripts'>
+<div class='row'>
+<div class='col' style='float: left; width: 35%;'>
+<img src='scripts-41c6143d.svg' style='max-width: 100%;'>
+</div>
+<div class='col' style='float: left; width: 65%; text-align: left;'>
+<h1 id="trial--scripts">Trial &amp; Scripts</h1>
+<ul>
+  <li>actual unit of execution</li>
+  <li>executed in the <strong>same context</strong></li>
+  <li><strong>depend</strong> on each other</li>
+</ul>
+</div>
+</div>
+</section>
+<section id='concepts_scripts'>
+<h2 id="script-dependencies">Script Dependencies</h2>
+<div class='image'>
+<img src='script-dependencies-simple-f8f88799.png' style='width: 70%;'>
+</div>
+<ul>
+  <li>traditional CI: one "build" ⇔ one script</li>
+  <li>more modern: one main script + before and after "hooks"</li>
+  <li>Cider-CI: <strong>scripts with dependencies</strong></li>
+</ul>
+</section>
+</section>
+<!-- /############################################################################# -->
+<!-- /### demos ################################################################### -->
+<!-- /############################################################################# -->
+<section id='demos'>
+<section id='demos_demos'>
+<h1>4. Demos</h1>
+<p style='font-size: 7em'>
+<i class='fa fa-file-video-o'></i>
+</p>
+</section>
+<section id='demos_madek-jobs'>
+<div class='image'>
+<a href='madek_job-dependencies-3e00dc46.svg'>
+<img src='madek_job-dependencies-3e00dc46.svg' style='max-height: 700px;'>
+</a>
+</div>
+</section>
+<section id='demos_madek-jobs-video'>
+<a href='jobs-demo.mp4'>
+<img src='jobs-demo-f79347b6.png'>
+</a>
+</section>
+<section id='demos_madek-scripts'>
+<a href='retry_and_scripts.mp4'>
+<img src='retry_and_scripts-58d3aa9c.png'>
+</a>
+</section>
+</section>
+<!-- /############################################################################# -->
+<!-- /### Tangential ############################################################## -->
+<!-- /############################################################################# -->
+<section id='addendum'>
+<section id='addendum_intro'>
+<h1>5. Addendum</h1>
+<p style='font-size: 7em'>
+<i class='fa fa-ellipsis-h'></i>
+</p>
+</section>
+<section id='addendum_false-positive'>
+<h1 id="managing-false-positives">Managing false positives</h1>
+
+<p>Retrying randomized tests can hide problems!</p>
+
+<p>"Generative Testing" e.g.</p>
+
+<h2 id="solution">Solution:</h2>
+
+<ul>
+  <li>reproducibility by initializing the
+  pseudo random generator (we use the <code>tree_id</code> e.g.)</li>
+  <li>statistics</li>
+</ul>
+</section>
+<section id='addendum_git'>
+<h1 id="git-scm-and-git-only">Git SCM and Git only</h1>
+<ul>
+  <li>don't compromise</li>
+  <li>can't support everything with reasonable effort</li>
+</ul>
+<aside class='notes'>
+<ul>
+  <li>no go for comercial systems</li>
+</ul>
+</aside>
+</section>
+<section id='addendum_project-security'>
+<h1 id="security--trust">Security &amp; Trust</h1>
+
+<ul>
+  <li>Cider-CI server itself <strong>never runs any code</strong> from projects</li>
+  <li><strong>"blessed" executors</strong> only accept trials for a particular project (repository)</li>
+</ul>
+<aside class='notes'>
+<p>siehe Vortrag Dr. Andreas Krüger</p>
+</aside>
+</section>
+<section id='addendum_matching'>
+<h1 id="matching-trials-to-executors">Matching Trials to Executors</h1>
+
+<ul>
+  <li>
+    <p>task specifies <strong>required traits</strong>, e.g: [<code>bash</code>, <code>ruby-2.2</code> ]</p>
+  </li>
+  <li>
+    <p>executors advertise <strong>available traites</strong>, e.g. [<code>bash</code>, <code>maven</code>, <code>postgresql</code>, <code>ruby-2.1</code>, <code>ruby-2.2</code>,  &#8230;]</p>
+  </li>
+</ul>
+
+<p>Cider-CI will determine a suitable executor.</p>
+<aside class='notes'>
+<p>siehe Vortrag Dr. Andreas Krüger</p>
+</aside>
+</section>
+<section id='addendum_deployment'>
+<h1 id="deployment">Deployment</h1>
+
+<ul>
+  <li>Ansible</li>
+  <li>Cider-CI deploy project, SCM managed, reproducible</li>
+</ul>
+<aside class='notes'>
+<p>siehe Vortrag Dr. Andreas Krüger</p>
+</aside>
+</section>
+<section id='addendum_expert'>
+<h1 id="cider-ci-is-an-expert-system">Cider-CI is an Expert System</h1>
+
+<p>it is about <strong>making the hard possible</strong>, and not
+not about making the simple easy*</p>
+
+<ul>
+  <li>for professionals</li>
+  <li>no compromises</li>
+  <li>steep learning curve</li>
+  <li>high rewards</li>
+</ul>
+
+<p>→ swiss army knife for devops</p>
+<p style='font-size: 70%; margin-top: 2em'>
+*see "Simple Made Easy" by Rich Hickey
+</p>
+</section>
+</section>
+<!-- /############################################################################# -->
+<!-- /### conclusion ############################################################## -->
+<!-- /############################################################################# -->
+<section id='end'>
+<section id='final-conclusion'>
+<h1 id="conclusion">Conclusion</h1>
+
+<ul>
+  <li>A false negative outcome becomes likely with an increasing number of tests.</li>
+  <li>The problem must be solved by retrying single tests.</li>
+  <li>Consider to build your own pipeline.</li>
+  <li>Try Cider-CI, open source, installs with two commands:</li>
+</ul>
+<a href='http://docs.cider-ci.info/introduction/quick-start/'>
+<br>
+<code style='font-size: 75%'>http://docs.cider-ci.info/introduction/quick-start/</code>
+</br>
+<img src='cider-ci_intro_qr-1e8a9cd1.svg' style='width: 3em;'>
+</a>
+<blockquote style='margin-top: 1em; font-size: 125%'>
+<b>
+Thank You!
+</b>
+</blockquote>
+</section>
+</section>
+
+</div>
+</div>
+</body>
+</html>
